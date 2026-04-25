@@ -1,55 +1,88 @@
 # a = min, b = max, c = mode
 
-# First we are going to create the density function with a variables check
-dtriang <- function(x, a, b, c) {
-  if (a >= b || c < a || c > b) {
-    stop("Parameters must satisfy a <= c <= b and a < b")
+#' Density function for the triangular distribution
+#'
+#' @param x Vector of quantiles
+#' @param min Lower limit of the distribution
+#' @param max Upper limit of the distribution
+#' @param mode Mode of the distribution
+#' @return Vector of densities
+#' @export
+#' @importFrom stats runif
+dtriang <- function(x, min, max, mode) {
+  if (min >= max || mode < min || mode > max) {
+    stop("Parameters must satisfy min <= mode <= max and min < max")
   }
-  if (x < a || x > b) {
-    return(0)
-  } else if (x <= c) {
-    return(2 * (x - a) / ((b - a) * (c - a)))
-  } else {
-    return(2 * (b - x) / ((b - a) * (b - c)))
-  }
+  ifelse(
+    x < min | x > max, 0,
+    ifelse(
+      x <= mode,
+      2 * (x - min) / ((max - min) * (mode - min)),
+      2 * (max - x) / ((max - min) * (max - mode))
+    )
+  )
 }
 
-# Secondly, we are going to create the cumulative distribution function with a variables check
-ptriang <- function(q, a, b, c) {
-  if (a >= b || c < a || c > b) {
-    stop("Parameters must satisfy a <= c <= b and a < b")
+#' Cumulative distribution function for the triangular distribution
+#'
+#' @param q Vector of quantiles
+#' @param min Lower limit of the distribution
+#' @param max Upper limit of the distribution
+#' @param mode Mode of the distribution
+#' @return Vector of probabilities
+#' @export
+ptriang <- function(q, min, max, mode) {
+  if (min >= max || mode < min || mode > max) {
+    stop("Parameters must satisfy min <= mode <= max and min < max")
   }
-  if (q < a) {
-    return(0)
-  } else if (q <= c) {
-    return((q - a)^2 / ((b - a) * (c - a)))
-  } else if (q < b) {
-    return(1 - (b - q)^2 / ((b - a) * (b - c)))
-  } else {
-    return(1)
-  }
+  ifelse(
+    q < min, 0,
+    ifelse(
+      q <= mode,
+      (q - min)^2 / ((max - min) * (mode - min)),
+      ifelse(
+        q < max,
+        1 - (max - q)^2 / ((max - min) * (max - mode)),
+        1
+      )
+    )
+  )
 }
 
-# Thirdly, we are going to create the quantile function with a variables check
-qtriang <- function(p, a, b, c) {
-  if (a >= b || c < a || c > b) {
-    stop("Parameters must satisfy a <= c <= b and a < b")
+#' Quantile function for the triangular distribution
+#'
+#' @param p Vector of probabilities
+#' @param min Lower limit of the distribution
+#' @param max Upper limit of the distribution
+#' @param mode Mode of the distribution
+#' @return Vector of quantiles
+#' @export
+qtriang <- function(p, min, max, mode) {
+  if (min >= max || mode < min || mode > max) {
+    stop("Parameters must satisfy min <= mode <= max and min < max")
   }
-  if (p < 0 || p > 1) {
+  if (any(p < 0 | p > 1)) {
     stop("p must be between 0 and 1")
   }
-  threshold <- (c - a) / (b - a)
-  if (p <= threshold) {
-    return(a + sqrt(p * (b - a) * (c - a)))
-  } else {
-    return(b - sqrt((1 - p) * (b - a) * (b - c)))
-  }
+  threshold <- (mode - min) / (max - min)
+  ifelse(
+    p <= threshold,
+    min + sqrt(p * (max - min) * (mode - min)),
+    max - sqrt((1 - p) * (max - min) * (max - mode))
+  )
 }
 
-# Finally, we are going to create the random generation function with a variables check
-rtriang <- function(n, a, b, c) {
-  if (a >= b || c < a || c > b) {
-    stop("Parameters must satisfy a <= c <= b and a < b")
+#' Random generation for the triangular distribution
+#'
+#' @param n Number of observations
+#' @param min Lower limit of the distribution
+#' @param max Upper limit of the distribution
+#' @param mode Mode of the distribution
+#' @return Vector of random values
+#' @export
+rtriang <- function(n, min, max, mode) {
+  if (min >= max || mode < min || mode > max) {
+    stop("Parameters must satisfy min <= mode <= max and min < max")
   }
-  qtriang(runif(n), a, b, c)
+  qtriang(runif(n), min, max, mode)
 }
