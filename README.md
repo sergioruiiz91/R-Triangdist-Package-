@@ -139,5 +139,5 @@ The tests are split into four files, one per function:
 
 ## Installation
 ```r
-remotes::install_github("tu_usuario_github/triangdist")
+remotes::install_github("sergioruiiz91/R-Triangdist-Package-.git")
 ```
