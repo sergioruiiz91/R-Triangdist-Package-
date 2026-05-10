@@ -22,6 +22,16 @@ test_that("dtriang is vectorized", {
   expect_equal(length(result), 3)
 })
 
+test_that("dtriang supports vectorized parameters", {
+  result <- dtriang(
+    x = c(0.5, 1.5),
+    min = c(0, 1),
+    max = c(2, 3),
+    mode = c(1, 2)
+  )
+  expect_equal(result, c(0.5, 0.5))
+})
+
 test_that("dtriang throws errors on invalid parameters", {
   expect_error(dtriang(x = 1, min = 2, max = 0, mode = 1))
   expect_error(dtriang(x = 1, min = 0, max = 2, mode = -1))

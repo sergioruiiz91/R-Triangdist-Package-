@@ -1,5 +1,14 @@
 # a = min, b = max, c = mode
 
+validate_triangular_params <- function(min, max, mode) {
+  if (any(is.na(min) | is.na(max) | is.na(mode))) {
+    stop("Parameters min, max, and mode must not be NA")
+  }
+  if (any(min >= max | mode < min | mode > max)) {
+    stop("Parameters must satisfy min <= mode <= max and min < max")
+  }
+}
+
 #' Density function for the triangular distribution
 #'
 #' @param x Vector of quantiles
@@ -10,9 +19,7 @@
 #' @export
 #' @importFrom stats runif
 dtriang <- function(x, min, max, mode) {
-  if (min >= max || mode < min || mode > max) {
-    stop("Parameters must satisfy min <= mode <= max and min < max")
-  }
+  validate_triangular_params(min, max, mode)
   ifelse(
     x < min | x > max, 0,
     ifelse(
@@ -32,9 +39,7 @@ dtriang <- function(x, min, max, mode) {
 #' @return Vector of probabilities
 #' @export
 ptriang <- function(q, min, max, mode) {
-  if (min >= max || mode < min || mode > max) {
-    stop("Parameters must satisfy min <= mode <= max and min < max")
-  }
+  validate_triangular_params(min, max, mode)
   ifelse(
     q < min, 0,
     ifelse(
@@ -58,9 +63,7 @@ ptriang <- function(q, min, max, mode) {
 #' @return Vector of quantiles
 #' @export
 qtriang <- function(p, min, max, mode) {
-  if (min >= max || mode < min || mode > max) {
-    stop("Parameters must satisfy min <= mode <= max and min < max")
-  }
+  validate_triangular_params(min, max, mode)
   if (any(p < 0 | p > 1)) {
     stop("p must be between 0 and 1")
   }
@@ -81,8 +84,6 @@ qtriang <- function(p, min, max, mode) {
 #' @return Vector of random values
 #' @export
 rtriang <- function(n, min, max, mode) {
-  if (min >= max || mode < min || mode > max) {
-    stop("Parameters must satisfy min <= mode <= max and min < max")
-  }
+  validate_triangular_params(min, max, mode)
   qtriang(runif(n), min, max, mode)
 }
